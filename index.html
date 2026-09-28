@@ -1,0 +1,391 @@
+﻿<!DOCTYPE html>
+<html lang="bn" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BUETIANS PATHSALA | Created by Ayush Nath</title>
+
+    <!-- Tailwind CSS & FontAwesome Icons -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Poppins:wght@500;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Hind Siliguri', 'Poppins', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .glass {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .dark .glass {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glow-effect {
+            box-shadow: 0 0 50px -12px rgba(99, 102, 241, 0.35);
+        }
+    </style>
+</head>
+<body x-data="appData()" x-init="initApp()" :class="{ 'dark bg-slate-950 text-slate-100': darkMode, 'bg-slate-50 text-slate-800': !darkMode }" class="font-sans min-h-screen flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
+
+    <!-- 1. WELCOME SCREEN (Made by Ayush Nath) -->
+    <div x-show="showWelcome && !isLocked" x-transition:leave="transition ease-in duration-500 transform" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-90" class="fixed inset-0 z-[100] bg-slate-950 flex items-center justify-center p-4">
+        <div class="max-w-md w-full p-8 rounded-3xl glass border border-indigo-500/30 text-center space-y-6 glow-effect relative overflow-hidden">
+            <div class="absolute -top-24 -left-24 w-48 h-48 bg-indigo-500/20 rounded-full blur-3xl"></div>
+            <div class="absolute -bottom-24 -right-24 w-48 h-48 bg-purple-500/20 rounded-full blur-3xl"></div>
+
+            <div class="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-tr from-indigo-600 via-violet-600 to-pink-500 flex items-center justify-center text-white text-3xl font-extrabold shadow-xl shadow-indigo-500/30 animate-bounce">
+                BP
+            </div>
+
+            <div class="space-y-2">
+                <span class="px-3 py-1 bg-indigo-500/10 border border-indigo-500/20 rounded-full text-xs font-semibold text-indigo-400 tracking-wider uppercase">
+                    Official Web Portal
+                </span>
+                <h2 class="text-2xl font-extrabold tracking-tight text-white">BUETIANS PATHSALA</h2>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-indigo-950/50 border border-indigo-500/20 space-y-1">
+                <p class="text-xs text-slate-400 uppercase tracking-widest font-bold">Designed & Developed By</p>
+                <h3 class="text-xl font-bold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                    AYUSH NATH
+                </h3>
+            </div>
+
+            <button @click="showWelcome = false" class="w-full py-4 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold rounded-2xl shadow-lg shadow-indigo-500/30 transition transform active:scale-95 flex items-center justify-center gap-2 text-lg">
+                Continue <i class="fa-solid fa-arrow-right text-sm"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- 2. MAINTENANCE / LOCKED OVERLAY (Kill-Switch Screen) -->
+    <div x-show="isLocked" x-cloak class="fixed inset-0 z-[200] bg-slate-950 flex items-center justify-center p-4">
+        <div class="max-w-md w-full p-8 rounded-3xl glass border border-rose-500/30 text-center space-y-5">
+            <div class="w-16 h-16 mx-auto rounded-full bg-rose-500/10 flex items-center justify-center text-rose-500 text-3xl">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-white">SYSTEM MAINTENANCE</h2>
+            <p class="text-slate-400 text-sm leading-relaxed">
+                ডোমেইন ও সার্ভার লাইসেন্স আপডেট প্রক্রিয়া চলছে। সাময়িক অসুবিধার জন্য আমরা আন্তরিকভাবে দুঃখিত। খুব শীঘ্রই সাইটটি পুনরায় চালু হবে।
+            </p>
+            <div class="pt-2">
+                <button @click="openSecretModal()" class="text-xs text-slate-600 hover:text-slate-400 transition">Admin Access</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. MAIN WEBSITE CONTENT -->
+    <div x-show="!showWelcome && !isLocked">
+        
+        <!-- Navigation Header -->
+        <header class="sticky top-0 z-50 glass shadow-sm">
+            <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+                <div class="flex items-center space-x-3 space-x-reverse cursor-pointer" @click="handleLogoClick()">
+                    <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-600 flex items-center justify-center text-white font-extrabold text-xl shadow-md shadow-indigo-500/30">
+                        BP
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-600 to-violet-600 dark:from-indigo-400 dark:to-violet-400 bg-clip-text text-transparent">
+                            BUETIANS PATHSALA
+                        </h1>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1">
+                            <i class="fa-solid fa-location-dot text-rose-500"></i> মতি টাওয়ার (৫ম তলা)
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <button @click="darkMode = !darkMode" class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                        <i x-show="!darkMode" class="fa-solid fa-moon text-indigo-600"></i>
+                        <i x-show="darkMode" class="fa-solid fa-sun text-amber-400"></i>
+                    </button>
+                    <a href="https://wa.me/8801634361303" target="_blank" class="hidden sm:flex px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs rounded-xl shadow-md transition items-center gap-2">
+                        <i class="fa-brands fa-whatsapp text-base"></i> ভর্তি তথ্য
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Body -->
+        <main class="max-w-6xl mx-auto px-4 py-8 space-y-10">
+
+            <!-- Hero Banner -->
+            <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-900 via-indigo-950 to-slate-900 text-white p-8 md:p-12 shadow-2xl border border-indigo-500/20">
+                <div class="relative z-10 max-w-2xl space-y-4">
+                    <span class="px-3.5 py-1 bg-indigo-500/20 border border-indigo-400/30 rounded-full text-xs font-bold text-indigo-300 uppercase tracking-wider">
+                        Class 9 - 10 Academic Special Care
+                    </span>
+                    <h2 class="text-3xl md:text-5xl font-extrabold leading-tight">
+                        সেরা মেন্টরদের সাথে সুদৃঢ় করো তোমার ভিত্তি
+                    </h2>
+                    <p class="text-indigo-200 text-sm md:text-base leading-relaxed">
+                        BUET, SUST এবং CU-এর অভিজ্ঞ শিক্ষকবৃন্দ দ্বারা পরিচালিত পূর্ণাঙ্গ কোচিং প্রোগ্রাম।
+                    </p>
+                    <div class="pt-2 flex flex-wrap gap-4">
+                        <a href="https://wa.me/8801634361303" target="_blank" class="px-6 py-3.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl shadow-lg shadow-emerald-500/30 flex items-center gap-2 transition transform active:scale-95">
+                            <i class="fa-brands fa-whatsapp text-lg"></i> সরাসরি কথা বলুন
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Subjects Section -->
+            <section class="space-y-4">
+                <h3 class="text-xl font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-book-open text-indigo-500"></i> পাঠ্য বিষয়সমূহ
+                </h3>
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+                    <div class="p-4 rounded-2xl glass text-center font-bold border border-slate-200 dark:border-slate-800 shadow-sm">
+                        <i class="fa-solid fa-calculator text-2xl text-indigo-500 mb-2 block"></i> General Math
+                    </div>
+                    <div class="p-4 rounded-2xl glass text-center font-bold border border-slate-200 dark:border-slate-800 shadow-sm">
+                        <i class="fa-solid fa-square-root-variable text-2xl text-indigo-500 mb-2 block"></i> Higher Math
+                    </div>
+                    <div class="p-4 rounded-2xl glass text-center font-bold border border-slate-200 dark:border-slate-800 shadow-sm">
+                        <i class="fa-solid fa-atom text-2xl text-indigo-500 mb-2 block"></i> Physics
+                    </div>
+                    <div class="p-4 rounded-2xl glass text-center font-bold border border-slate-200 dark:border-slate-800 shadow-sm">
+                        <i class="fa-solid fa-flask text-2xl text-indigo-500 mb-2 block"></i> Chemistry
+                    </div>
+                    <div class="p-4 rounded-2xl glass text-center font-bold border border-slate-200 dark:border-slate-800 shadow-sm">
+                        <i class="fa-solid fa-dna text-2xl text-indigo-500 mb-2 block"></i> Biology
+                    </div>
+                </div>
+            </section>
+
+            <!-- Schedule Section -->
+            <section class="space-y-4">
+                <h3 class="text-xl font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-clock text-indigo-500"></i> ব্যাচ সময়সূচী
+                </h3>
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div class="p-5 rounded-2xl glass border border-slate-200 dark:border-slate-800 space-y-2">
+                        <span class="text-xs font-bold px-2.5 py-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-md">সকাল</span>
+                        <h4 class="font-bold">সকালের ব্যাচ</h4>
+                        <p class="text-2xl font-extrabold text-indigo-600 dark:text-indigo-400">9:00 - 11:00 <span class="text-xs font-normal">AM</span></p>
+                    </div>
+                    <div class="p-5 rounded-2xl glass border border-slate-200 dark:border-slate-800 space-y-2">
+                        <span class="text-xs font-bold px-2.5 py-1 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-md">বিকাল</span>
+                        <h4 class="font-bold">বিকালের ১ম ব্যাচ</h4>
+                        <p class="text-2xl font-extrabold text-indigo-600 dark:text-indigo-400">3:00 - 5:00 <span class="text-xs font-normal">PM</span></p>
+                    </div>
+                    <div class="p-5 rounded-2xl glass border border-slate-200 dark:border-slate-800 space-y-2">
+                        <span class="text-xs font-bold px-2.5 py-1 bg-violet-500/10 text-violet-600 dark:text-violet-400 rounded-md">সন্ধ্যা</span>
+                        <h4 class="font-bold">বিকালের ২য় ব্যাচ</h4>
+                        <p class="text-2xl font-extrabold text-indigo-600 dark:text-indigo-400">5:00 - 7:00 <span class="text-xs font-normal">PM</span></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Teachers Panel -->
+            <section class="space-y-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <h3 class="text-xl font-bold flex items-center gap-2">
+                        <i class="fa-solid fa-user-graduate text-indigo-500"></i> অভিজ্ঞ শিক্ষকমণ্ডলী
+                    </h3>
+                    
+                    <div class="flex flex-wrap gap-1.5 text-xs">
+                        <button @click="selectedSubject = 'all'" :class="selectedSubject === 'all' ? 'bg-indigo-600 text-white' : 'glass text-slate-600 dark:text-slate-300'" class="px-3 py-1.5 rounded-lg border transition">সবগুলো</button>
+                        <button @click="selectedSubject = 'gmath'" :class="selectedSubject === 'gmath' ? 'bg-indigo-600 text-white' : 'glass text-slate-600 dark:text-slate-300'" class="px-3 py-1.5 rounded-lg border transition">G.Math</button>
+                        <button @click="selectedSubject = 'hmath'" :class="selectedSubject === 'hmath' ? 'bg-indigo-600 text-white' : 'glass text-slate-600 dark:text-slate-300'" class="px-3 py-1.5 rounded-lg border transition">H.Math</button>
+                        <button @click="selectedSubject = 'physics'" :class="selectedSubject === 'physics' ? 'bg-indigo-600 text-white' : 'glass text-slate-600 dark:text-slate-300'" class="px-3 py-1.5 rounded-lg border transition">Physics</button>
+                        <button @click="selectedSubject = 'chemistry'" :class="selectedSubject === 'chemistry' ? 'bg-indigo-600 text-white' : 'glass text-slate-600 dark:text-slate-300'" class="px-3 py-1.5 rounded-lg border transition">Chemistry</button>
+                        <button @click="selectedSubject = 'biology'" :class="selectedSubject === 'biology' ? 'bg-indigo-600 text-white' : 'glass text-slate-600 dark:text-slate-300'" class="px-3 py-1.5 rounded-lg border transition">Biology</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                    <div x-show="selectedSubject === 'all' || selectedSubject === 'gmath'" class="p-5 rounded-2xl glass border border-slate-200 dark:border-slate-800 text-center space-y-3">
+                        <div class="w-16 h-16 rounded-full bg-slate-200 dark:bg-slate-800 mx-auto flex items-center justify-center text-xl font-bold text-indigo-500">S</div>
+                        <div>
+                            <h4 class="font-bold">Shad Sir</h4>
+                            <span class="inline-block px-2.5 py-0.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-bold rounded mt-1">SUST</span>
+                        </div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 border-t border-slate-200 dark:border-slate-800 pt-2 font-medium">General Math</p>
+                    </div>
+
+                    <div x-show="selectedSubject === 'all' || selectedSubject === 'physics'" class="p-5 rounded-2xl glass border border-slate-200 dark:border-slate-800 text-center space-y-3">
+                        <div class="w-16 h-16 rounded-full bg-slate-200 dark:bg-slate-800 mx-auto flex items-center justify-center text-xl font-bold text-indigo-500">U</div>
+                        <div>
+                            <h4 class="font-bold">Umair Sir</h4>
+                            <span class="inline-block px-2.5 py-0.5 bg-rose-500/10 text-rose-600 dark:text-rose-400 text-xs font-bold rounded mt-1">BUET</span>
+                        </div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 border-t border-slate-200 dark:border-slate-800 pt-2 font-medium">Physics</p>
+                    </div>
+
+                    <div x-show="selectedSubject === 'all' || selectedSubject === 'chemistry'" class="p-5 rounded-2xl glass border border-slate-200 dark:border-slate-800 text-center space-y-3">
+                        <div class="w-16 h-16 rounded-full bg-slate-200 dark:bg-slate-800 mx-auto flex items-center justify-center text-xl font-bold text-indigo-500">S</div>
+                        <div>
+                            <h4 class="font-bold">Sami Sir</h4>
+                            <span class="inline-block px-2.5 py-0.5 bg-rose-500/10 text-rose-600 dark:text-rose-400 text-xs font-bold rounded mt-1">BUET</span>
+                        </div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 border-t border-slate-200 dark:border-slate-800 pt-2 font-medium">Chemistry</p>
+                    </div>
+
+                    <div x-show="selectedSubject === 'all' || selectedSubject === 'hmath'" class="p-5 rounded-2xl glass border border-slate-200 dark:border-slate-800 text-center space-y-3">
+                        <div class="w-16 h-16 rounded-full bg-slate-200 dark:bg-slate-800 mx-auto flex items-center justify-center text-xl font-bold text-indigo-500">M</div>
+                        <div>
+                            <h4 class="font-bold">Masud Sir</h4>
+                            <span class="inline-block px-2.5 py-0.5 bg-rose-500/10 text-rose-600 dark:text-rose-400 text-xs font-bold rounded mt-1">BUET</span>
+                        </div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 border-t border-slate-200 dark:border-slate-800 pt-2 font-medium">Higher Math</p>
+                    </div>
+
+                    <div x-show="selectedSubject === 'all' || selectedSubject === 'biology'" class="p-5 rounded-2xl glass border border-slate-200 dark:border-slate-800 text-center space-y-3">
+                        <div class="w-16 h-16 rounded-full bg-slate-200 dark:bg-slate-800 mx-auto flex items-center justify-center text-xl font-bold text-indigo-500">J</div>
+                        <div>
+                            <h4 class="font-bold">Jawad Sir</h4>
+                            <span class="inline-block px-2.5 py-0.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 text-xs font-bold rounded mt-1">CU</span>
+                        </div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 border-t border-slate-200 dark:border-slate-800 pt-2 font-medium">Biology</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Contact Section -->
+            <section class="p-8 rounded-3xl glass border border-slate-200 dark:border-slate-800 text-center space-y-4">
+                <h3 class="text-2xl font-bold">যোগাযোগ ও ঠিকানা</h3>
+                <p class="text-slate-600 dark:text-slate-400 text-sm max-w-md mx-auto">
+                    <i class="fa-solid fa-location-dot text-rose-500 mr-1"></i> মতি টাওয়ার (৫ম তলা)<br>
+                    ভর্তির জন্য মেসেজ দিন বা সরাসরি কল করুন।
+                </p>
+                <div class="pt-2 flex flex-col sm:flex-row justify-center items-center gap-3">
+                    <a href="tel:01634361303" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-phone"></i> 01634361303
+                    </a>
+                    <a href="https://wa.me/8801634361303" target="_blank" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold transition flex items-center justify-center gap-2">
+                        <i class="fa-brands fa-whatsapp text-lg"></i> WhatsApp Direct
+                    </a>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="border-t border-slate-200 dark:border-slate-800 py-6 text-center text-xs text-slate-500 dark:text-slate-400">
+            <p>&copy; ২০২৬ BUETIANS PATHSALA | Crafted by Ayush Nath</p>
+        </footer>
+
+    </div>
+
+    <!-- 4. SECRET CONTROL MODAL -->
+    <div x-show="showSecretModal" x-cloak class="fixed inset-0 z-[300] bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="max-w-sm w-full p-6 rounded-3xl bg-slate-900 border border-slate-800 text-slate-100 space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center">
+                <h3 class="font-bold text-indigo-400 text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-user-shield"></i> Developer Control
+                </h3>
+                <button @click="showSecretModal = false" class="text-slate-500 hover:text-white">&times;</button>
+            </div>
+            
+            <p class="text-xs text-slate-400">সাইট নিয়ন্ত্রণ করতে সিক্রেট পাসওয়ার্ড দিন:</p>
+            
+            <input type="password" x-model="passInput" placeholder="Password" class="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-sm focus:outline-none focus:border-indigo-500">
+            
+            <div class="flex gap-2">
+                <button @click="toggleLock(true)" class="flex-1 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs transition">Lock Site</button>
+                <button @click="toggleLock(false)" class="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition">Unlock Site</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function appData() {
+            return {
+                darkMode: true,
+                showWelcome: true,
+                selectedSubject: 'all',
+                isLocked: false,
+                showSecretModal: false,
+                passInput: '',
+                logoClicks: 0,
+                logoTimer: null,
+
+                initApp() {
+                    this.isLocked = localStorage.getItem('bp_locked') === 'true';
+                    
+                    window.addEventListener('keydown', (e) => {
+                        if (e.ctrlKey && e.altKey && e.key.toLowerCase() === 'k') {
+                            e.preventDefault();
+                            this.openSecretModal();
+                        }
+                    });
+                },
+
+                handleLogoClick() {
+                    this.logoClicks++;
+                    clearTimeout(this.logoTimer);
+                    this.logoTimer = setTimeout(() => { this.logoClicks = 0; }, 2000);
+
+                    if (this.logoClicks >= 5) {
+                        this.logoClicks = 0;
+                        this.openSecretModal();
+                    }
+                },
+
+                openSecretModal() {
+                    this.passInput = '';
+                    this.showSecretModal = true;
+                },
+
+                toggleLock(lockStatus) {
+                    if (this.passInput === '2205122') {
+                        this.isLocked = lockStatus;
+                        localStorage.setItem('bp_locked', lockStatus);
+                        this.showSecretModal = false;
+                        alert(lockStatus ? 'ওয়েবসাইট বন্ধ করা হয়েছে!' : 'ওয়েবসাইট আবার চালু করা হয়েছে!');
+                    } else {
+                        alert('পাসওয়ার্ড ভুল হয়েছে!');
+                    }
+                }
+            }
+        }
+    </script><!-- আপনার আগের কাজ বা অন্যান্য কোড এখানে থাকবে -->
+
+    <!-- নতুন গ্যালারি ভিডিও প্লেয়ার কোডটি এখানে পেস্ট করবেন -->
+    <div style="max-width: 600px; margin: 30px auto; text-align: center; font-family: Arial, sans-serif; padding: 25px; border: 2px dashed #0056b3; border-radius: 12px; background-color: #f8f9fa;">
+        <h3 style="color: #0056b3; margin-bottom: 8px;">🎥 অনলাইন ক্লাস প্লেয়ার</h3>
+        <p style="color: #666; font-size: 14px; margin-bottom: 20px;">গ্যালারি থেকে সরাসরি ভিডিও সিলেক্ট করে প্লে করুন</p>
+        
+        <input type="file" id="videoSelect" accept="video/*" style="display: none;" onchange="loadVideo(event)">
+        
+        <label for="videoSelect" style="background-color: #28a745; color: white; padding: 14px 28px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px; display: inline-block; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
+            📱 গ্যালারি থেকে ভিডিও বাছুন
+        </label>
+
+        <div style="margin-top: 20px;">
+            <video id="mainVideoPlayer" controls style="width: 100%; max-height: 400px; display: none; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);"></video>
+        </div>
+    </div>
+
+    <script>
+    function loadVideo(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const player = document.getElementById('mainVideoPlayer');
+            player.src = URL.createObjectURL(file);
+            player.style.display = 'block';
+        }
+    }
+    </script>
+
+</body>
+</html>
+</body>
+</html>
